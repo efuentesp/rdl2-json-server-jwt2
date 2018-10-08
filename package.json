@@ -1,0 +1,21 @@
+{
+  "name": "json-server-api",
+  "version": "1.0.0",
+  "description": "Simple Fake API",
+  "main": "main.js",
+  "scripts": {
+    "json:server": "json-server --watch ./database/condominium/entities.json",
+    "auth:only": "json-server --watch ./auth.json",
+    "start": "node server.js"
+  },
+  "author": "ME:)",
+  "license": "ISC",
+  "dependencies": {
+    "joi": "^13.7.0",
+    "json-server": "^0.12.2",
+    "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.11",
+    "lodash-id": "^0.14.0",
+    "uuid": "^3.3.2"
+  }
+}
