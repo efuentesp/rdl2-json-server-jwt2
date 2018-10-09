@@ -6,7 +6,7 @@
   "scripts": {
     "json:server": "json-server --watch ./database/condominium/entities.json",
     "auth:only": "json-server --watch ./auth.json",
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "author": "ME:)",
   "license": "ISC",
@@ -16,6 +16,7 @@
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
     "lodash-id": "^0.14.0",
+    "nodemon": "^1.18.4",
     "uuid": "^3.3.2"
   }
 }

@@ -294,15 +294,81 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
           break;
         case "unit":
           validation_result = unit_schema.validate(req.body);
+          const unit_property = _.find(
+            bizdb_condominium.property,
+            e => e.id === req.body.propertyId
+          );
+          if (unit_property === undefined) {
+            error_messages.push(
+              `Property id "${req.body.propertyId}" doesn't exist.`
+            );
+            res.status(400).json({
+              status: 400,
+              message: error_messages
+            });
+            return;
+          }
+          const unit_owner = _.find(
+            bizdb_condominium.person,
+            e => e.id === req.body.ownerId
+          );
+          if (unit_owner === undefined) {
+            error_messages.push(
+              `Owner id "${req.body.ownerId}" doesn't exist.`
+            );
+            res.status(400).json({
+              status: 400,
+              message: error_messages
+            });
+            return;
+          }
+          const unit_tenant = _.find(
+            bizdb_condominium.person,
+            e => e.id === req.body.tenantId
+          );
+          if (unit_tenant === undefined) {
+            error_messages.push(
+              `Tenant id "${req.body.tenantId}" doesn't exist.`
+            );
+            res.status(400).json({
+              status: 400,
+              message: error_messages
+            });
+            return;
+          }
           break;
         case "parkingspot":
           validation_result = parkingspot_schema.validate(req.body);
+          const parkingspot_unit = _.find(
+            bizdb_condominium.unit,
+            e => e.id === req.body.unitId
+          );
+          if (parkingspot_unit === undefined) {
+            error_messages.push(`Unit id "${req.body.unitId}" doesn't exist.`);
+            res.status(400).json({
+              status: 400,
+              message: error_messages
+            });
+            return;
+          }
           break;
         case "person":
           validation_result = person_schema.validate(req.body);
           break;
         case "vehicle":
           validation_result = vehicle_schema.validate(req.body);
+          const vehicle_unit = _.find(
+            bizdb_condominium.unit,
+            e => e.id === req.body.unitId
+          );
+          if (vehicle_unit === undefined) {
+            error_messages.push(`Unit id "${req.body.unitId}" doesn't exist.`);
+            res.status(400).json({
+              status: 400,
+              message: error_messages
+            });
+            return;
+          }
           break;
         case "note":
           validation_result = note_schema.validate(req.body);
