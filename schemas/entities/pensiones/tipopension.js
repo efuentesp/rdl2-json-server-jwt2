@@ -1,9 +1,14 @@
 const joi = require("joi");
 
 module.exports = joi.object().keys({
-	note: joi
+	clave: joi
 		.string()
 		.trim()
-		.max(255)
+		.max(64)
+		.required(),
+	nombre: joi
+		.string()
+		.trim()
+		.max(64)
 		.required(),
 });

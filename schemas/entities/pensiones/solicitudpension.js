@@ -1,27 +1,24 @@
 const joi = require("joi");
 
 module.exports = joi.object().keys({
-	status: joi
-		.string()
-		.valid(
-			"ACTIVE",
-			"DRAFT"
-		)
+	numero: joi
+		.number()
+		.integer()
 		.required(),
-	expirationdate: joi
+	afiliadoId: joi
+		.string()
+		.trim()
+		.token()
+		.required(),
+	tipoId: joi
+		.string()
+		.trim()
+		.token()
+		.required(),
+	fecha_solicitud: joi
 		.date()
 		.required(),
-	title: joi
-		.string()
-		.trim()
-		.max(64)
-		.required(),
-	body: joi
-		.string()
-		.trim()
-		.max(255)
-		.required(),
-	attachment: joi
+	observaciones: joi
 		.string()
 		.trim()
 		.max(255)

@@ -7,12 +7,8 @@ const lodashId = require("lodash-id");
 const url = require("url");
 
 const server = jsonServer.create();
-const router_condominium = jsonServer.router(
-  "./database/condominium/entities.json"
-);
-const bizdb_condominium = JSON.parse(
-  fs.readFileSync("./database/condominium/entities.json", "UTF-8")
-);
+const router_pensiones = jsonServer.router("./database/pensiones/entities.json");
+const bizdb_pensiones = JSON.parse(fs.readFileSync("./database/pensiones/entities.json", "UTF-8"));
 const router_auth = jsonServer.router("./database/auth.json");
 const authdb = JSON.parse(fs.readFileSync("./database/auth.json", "UTF-8"));
 
@@ -21,14 +17,11 @@ const role_schema = require("./schemas/auth/roles");
 const permission_schema = require("./schemas/auth/permissions");
 const permission_assignment_schema = require("./schemas/auth/permission_assignment");
 
-const company_schema = require("./schemas/entities/condominium/company");
-const property_schema = require("./schemas/entities/condominium/property");
-const unit_schema = require("./schemas/entities/condominium/unit");
-const parkingspot_schema = require("./schemas/entities/condominium/parkingspot");
-const person_schema = require("./schemas/entities/condominium/person");
-const vehicle_schema = require("./schemas/entities/condominium/vehicle");
-const note_schema = require("./schemas/entities/condominium/note");
-const post_schema = require("./schemas/entities/condominium/post");
+const direccion_schema = require("./schemas/entities/pensiones/direccion");
+const afiliado_schema = require("./schemas/entities/pensiones/afiliado");
+const tipopension_schema = require("./schemas/entities/pensiones/tipopension");
+const solicitudpension_schema = require("./schemas/entities/pensiones/solicitudpension");
+const beneficiario_schema = require("./schemas/entities/pensiones/beneficiario");
 
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
@@ -42,89 +35,89 @@ _.mixin(lodashId);
 
 // Create a token from a payload
 function createToken(payload) {
-  return jwt.sign(payload, SECRET_KEY, { expiresIn });
+	return jwt.sign(payload, SECRET_KEY, { expiresIn });
 }
 
 // Verify the token
 function verifyToken(token) {
-  return jwt.verify(
-    token,
-    SECRET_KEY,
-    (err, decode) => (decode !== undefined ? decode : err)
-  );
+	return jwt.verify(
+		token,
+		SECRET_KEY,
+		(err, decode) => (decode !== undefined ? decode : err)
+	);
 }
 
 // Check if the user exists in database
 function isAuthenticated({ email, password }) {
-  return (
-    authdb.users.findIndex(
-      user => user.email === email && user.password === password
-    ) !== -1
-  );
+	return (
+		authdb.users.findIndex(
+			user => user.email === email && user.password === password
+		) !== -1
+	);
 }
 
 function findUserProfile(email) {
-  var permissions = [];
-  const user = _.find(authdb.users, u => u.email === email);
-  const role = _.find(authdb.roles, r => r.id === user.roleId);
-  const permission_assignment = _.filter(
-    authdb.permission_assignment,
-    a => a.roleId === user.roleId
-  );
-  permission_assignment.forEach(pa => {
-    permissions.push(_.find(authdb.permissions, p => p.id === pa.permissionId));
-  });
-  const user_profile = {
-    user: {
-      username: user.username,
-      display_name: user.display_name,
-      email: user.email,
-      user_enabled: user.enabled,
-      role: role.name,
-      role_enabled: role.enabled
-    },
-    permissions
-  };
+	var permissions = [];
+	const user = _.find(authdb.users, u => u.email === email);
+	const role = _.find(authdb.roles, r => r.id === user.roleId);
+	const permission_assignment = _.filter(
+		authdb.permission_assignment,
+		a => a.roleId === user.roleId
+	);
+	permission_assignment.forEach(pa => {
+		permissions.push(_.find(authdb.permissions, p => p.id === pa.permissionId));
+	});
+	const user_profile = {
+		user: {
+			username: user.username,
+			display_name: user.display_name,
+			email: user.email,
+			user_enabled: user.enabled,
+			role: role.name,
+			role_enabled: role.enabled
+		},
+		permissions
+	};
 
-  return user_profile;
+	return user_profile;
 }
 
 function isPermissionFound(token, permission) {
-  const permission_found = _.find(
-    token.permissions,
-    p => p.code === permission
-  );
-  return typeof permission_found == "undefined" ? false : true;
+	const permission_found = _.find(
+		token.permissions,
+		p => p.code === permission
+	);
+	return typeof permission_found == "undefined" ? false : true;
 }
 
 function hasAuthority(resource, operation, user_profile) {
-  const permission = resource + ":" + operation;
-  const all_operations = resource + ":*";
-  const superuser = "*:*";
-
-  //console.log(permission);
-
-  if (!isPermissionFound(user_profile, permission)) {
-    if (!isPermissionFound(user_profile, all_operations)) {
-      if (!isPermissionFound(user_profile, superuser)) {
-        return false;
-      }
-    }
-  }
-  return true;
+	const permission = resource + ":" + operation;
+	const all_operations = resource + ":*";
+	const superuser = "*:*";
+	
+	//console.log(permission);
+	
+	if (!isPermissionFound(user_profile, permission)) {
+		if (!isPermissionFound(user_profile, all_operations)) {
+			if (!isPermissionFound(user_profile, superuser)) {
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 server.post("/api/v1/auth/login", (req, res) => {
-  const { email, password } = req.body;
-  if (isAuthenticated({ email, password }) === false) {
-    res
-      .status(401)
-      .json({ status: 401, message: "Error: Incorrect email or password" });
-    return;
-  }
-  const user_profile = findUserProfile(email);
-  const access_token = createToken(user_profile.user);
-  res.status(200).json({ access_token });
+	const { email, password } = req.body;
+	if (isAuthenticated({ email, password }) === false) {
+		res
+			.status(401)
+			.json({ status: 401, message: "Error: Incorrect email or password" });
+		return;
+	}
+	const user_profile = findUserProfile(email);
+	const access_token = createToken(user_profile.user);
+	res.status(200).json({ access_token });
 });
 
 server.get("/api/v1/auth/profile", (req, res) => {
@@ -149,11 +142,7 @@ server.get("/api/v1/auth/profile", (req, res) => {
   } catch (err) {
     res
       .status(401)
-      .json({
-        status: 401,
-        message: "Error: Access token is revoked",
-        error: err
-      });
+      .json({ status: 401, message: "Error: Access token is revoked", error: err });
   }
 });
 
@@ -178,8 +167,8 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
 
     const auth_entities = Object.keys(authdb);
     let entities = auth_entities;
-    const biz_entities_condominium = Object.keys(bizdb_condominium);
-    entities = _.union(entities, biz_entities_condominium);
+    const biz_entities_pensiones = Object.keys(bizdb_pensiones);
+    entities = _.union(entities, biz_entities_pensiones);
 
     const pathname_tokens = q.pathname.split("/");
     resources = _.intersection(entities, pathname_tokens);
@@ -285,97 +274,93 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
             }
           }
           break;
-
-        case "company":
-          validation_result = company_schema.validate(req.body);
-          break;
-        case "property":
-          validation_result = property_schema.validate(req.body);
-          break;
-        case "unit":
-          validation_result = unit_schema.validate(req.body);
-          const unit_property = _.find(
-            bizdb_condominium.property,
-            e => e.id === req.body.propertyId
-          );
-          if (unit_property === undefined) {
-            error_messages.push(
-              `Property id "${req.body.propertyId}" doesn't exist.`
-            );
-            res.status(400).json({
-              status: 400,
-              message: error_messages
-            });
-            return;
-          }
-          const unit_owner = _.find(
-            bizdb_condominium.person,
-            e => e.id === req.body.ownerId
-          );
-          if (unit_owner === undefined) {
-            error_messages.push(
-              `Owner id "${req.body.ownerId}" doesn't exist.`
-            );
-            res.status(400).json({
-              status: 400,
-              message: error_messages
-            });
-            return;
-          }
-          const unit_tenant = _.find(
-            bizdb_condominium.person,
-            e => e.id === req.body.tenantId
-          );
-          if (unit_tenant === undefined) {
-            error_messages.push(
-              `Tenant id "${req.body.tenantId}" doesn't exist.`
-            );
-            res.status(400).json({
-              status: 400,
-              message: error_messages
-            });
-            return;
-          }
-          break;
-        case "parkingspot":
-          validation_result = parkingspot_schema.validate(req.body);
-          const parkingspot_unit = _.find(
-            bizdb_condominium.unit,
-            e => e.id === req.body.unitId
-          );
-          if (parkingspot_unit === undefined) {
-            error_messages.push(`Unit id "${req.body.unitId}" doesn't exist.`);
-            res.status(400).json({
-              status: 400,
-              message: error_messages
-            });
-            return;
-          }
-          break;
-        case "person":
-          validation_result = person_schema.validate(req.body);
-          break;
-        case "vehicle":
-          validation_result = vehicle_schema.validate(req.body);
-          const vehicle_unit = _.find(
-            bizdb_condominium.unit,
-            e => e.id === req.body.unitId
-          );
-          if (vehicle_unit === undefined) {
-            error_messages.push(`Unit id "${req.body.unitId}" doesn't exist.`);
-            res.status(400).json({
-              status: 400,
-              message: error_messages
-            });
-            return;
-          }
-          break;
-        case "note":
-          validation_result = note_schema.validate(req.body);
-          break;
-        case "post":
-          validation_result = post_schema.validate(req.body);
-          break;
+          
+		case "direccion":
+			validation_result = direccion_schema.validate(req.body);
+			break;
+		case "afiliado":
+			validation_result = afiliado_schema.validate(req.body);
+			const afiliado_direccioncorreo = _.find(
+			  bizdb_pensiones.direccion,
+			  e => e.id === req.body.direccioncorreoId
+			);
+			if (afiliado_direccioncorreo === undefined) {
+			  error_messages.push(
+			    `DireccionCorreo id "${req.body.direccioncorreoId}" doesn't exist.`
+			  );
+			  res.status(400).json({
+			    status: 400,
+			    message: error_messages
+			  });
+			  return;
+			}
+			const afiliado_domicilio = _.find(
+			  bizdb_pensiones.direccion,
+			  e => e.id === req.body.domicilioId
+			);
+			if (afiliado_domicilio === undefined) {
+			  error_messages.push(
+			    `Domicilio id "${req.body.domicilioId}" doesn't exist.`
+			  );
+			  res.status(400).json({
+			    status: 400,
+			    message: error_messages
+			  });
+			  return;
+			}
+			break;
+		case "tipopension":
+			validation_result = tipopension_schema.validate(req.body);
+			break;
+		case "solicitudpension":
+			validation_result = solicitudpension_schema.validate(req.body);
+			const solicitudpension_afiliado = _.find(
+			  bizdb_pensiones.afiliado,
+			  e => e.id === req.body.afiliadoId
+			);
+			if (solicitudpension_afiliado === undefined) {
+			  error_messages.push(
+			    `Afiliado id "${req.body.afiliadoId}" doesn't exist.`
+			  );
+			  res.status(400).json({
+			    status: 400,
+			    message: error_messages
+			  });
+			  return;
+			}
+			const solicitudpension_tipo = _.find(
+			  bizdb_pensiones.tipopension,
+			  e => e.id === req.body.tipoId
+			);
+			if (solicitudpension_tipo === undefined) {
+			  error_messages.push(
+			    `Tipo id "${req.body.tipoId}" doesn't exist.`
+			  );
+			  res.status(400).json({
+			    status: 400,
+			    message: error_messages
+			  });
+			  return;
+			}
+			break;
+		case "beneficiario":
+			validation_result = beneficiario_schema.validate(req.body);
+			const beneficiario_afiliado = _.find(
+			  bizdb_pensiones.afiliado,
+			  e => e.id === req.body.afiliadoId
+			);
+			if (beneficiario_afiliado === undefined) {
+			  error_messages.push(
+			    `Afiliado id "${req.body.afiliadoId}" doesn't exist.`
+			  );
+			  res.status(400).json({
+			    status: 400,
+			    message: error_messages
+			  });
+			  return;
+			}
+			break;
+		
       }
     }
 
@@ -396,14 +381,10 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
   } catch (err) {
     res
       .status(401)
-      .json({
-        status: 401,
-        message: "Error: Access token is revoked",
-        error: err
-      });
+      .json({ status: 401, message: "Error: Access token is revoked", error: err });
   }
 });
-
+		
 server.get("/api/v1/auth/roles/:roleId/permissions", (req, res) => {
   let permissions = [];
   const permission_assignment = _.filter(
@@ -417,7 +398,7 @@ server.get("/api/v1/auth/roles/:roleId/permissions", (req, res) => {
 });
 
 server.use("/api/v1/auth", router_auth);
-server.use("/api/v1/condominium", router_condominium);
+server.use("/api/v1/pensiones", router_pensiones);
 
 server.listen(3000, () => {
   console.log("Run Auth API Server (port: 3000)");

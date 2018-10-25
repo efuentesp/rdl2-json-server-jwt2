@@ -1,23 +1,14 @@
 const joi = require("joi");
 
 module.exports = joi.object().keys({
-	unitId: joi
-		.string()
-		.trim()
-		.token()
-		.optional(),
-	floor: joi
-		.number()
-		.integer()
-		.required(),
-	spot: joi
+	calle: joi
 		.string()
 		.trim()
 		.max(64)
 		.required(),
-	description: joi
+	numero: joi
 		.string()
 		.trim()
-		.max(255)
-		.optional(),
+		.max(64)
+		.required(),
 });
