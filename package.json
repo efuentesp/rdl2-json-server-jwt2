@@ -6,7 +6,8 @@
   "scripts": {
     "json:server": "json-server --watch ./database/condominium/entities.json",
     "auth:only": "json-server --watch ./auth.json",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "test": "jest"
   },
   "author": "ME:)",
   "license": "ISC",
@@ -18,5 +19,9 @@
     "lodash-id": "^0.14.0",
     "nodemon": "^1.18.4",
     "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "frisby": "^2.1.0",
+    "jest": "^23.6.0"
   }
 }

@@ -147,13 +147,11 @@ server.get("/api/v1/auth/profile", (req, res) => {
       .status(200)
       .json({ user: user_profile.user, permissions: user_profile.permissions });
   } catch (err) {
-    res
-      .status(401)
-      .json({
-        status: 401,
-        message: "Error: Access token is revoked",
-        error: err
-      });
+    res.status(401).json({
+      status: 401,
+      message: "Error: Access token is revoked",
+      error: err
+    });
   }
 });
 
@@ -394,13 +392,11 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
 
     next();
   } catch (err) {
-    res
-      .status(401)
-      .json({
-        status: 401,
-        message: "Error: Access token is revoked",
-        error: err
-      });
+    res.status(401).json({
+      status: 401,
+      message: "Error: Access token is revoked",
+      error: err
+    });
   }
 });
 
@@ -414,6 +410,51 @@ server.get("/api/v1/auth/roles/:roleId/permissions", (req, res) => {
     permissions.push(_.find(authdb.permissions, p => p.id === pa.permissionId));
   });
   res.status(200).json({ permissions });
+});
+
+function updateRoleAssignemt(i, r) {
+  r.forEach(role => {
+    role.assigned = i;
+  });
+  return r;
+}
+
+server.get("/api/v1/auth/permissionsvsroles", (req, res) => {
+  let permissionsvsroles = [];
+
+  let roles = [];
+  authdb.roles.forEach(r => {
+    roles.push({
+      id: r.id,
+      name: r.name,
+      description: r.description,
+      assigned: false
+    });
+  });
+
+  authdb.permissions.forEach(p => {
+    const split_permission = p.code.split(":");
+    let permission = {
+      permission: {
+        id: p.id,
+        resource: split_permission[0],
+        action: split_permission[1],
+        scope: split_permission[2] === undefined ? "*" : split_permission[2],
+        description: p.description
+      },
+      roles
+    };
+    permissionsvsroles.push(permission);
+  });
+
+  let i = 0;
+  permissionsvsroles.forEach(p => {
+    //p.roles = updateRoleAssignemt(i, p.roles);
+    updateRoleAssignemt(i, p.roles);
+    i++;
+  });
+
+  res.status(200).json({ permissionsvsroles });
 });
 
 server.use("/api/v1/auth", router_auth);
