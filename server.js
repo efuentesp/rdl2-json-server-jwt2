@@ -420,21 +420,25 @@ function updateRoleAssignemt(i, r) {
 }
 
 function updateRoles(pID){
-   let roles = [];
-   authdb.permission_assignment.forEach(pa => {
-     let assign=false;
-     if (pID===pa.permissionId) assign=true;
-     let i=0;
-     //lookup rolesDB info
-     while (authdb.roles[i].id!==pa.roleId) 
-      i++; 
-     roles.push({
-      id: pa.id,
-      name: authdb.roles[i].name, 
-      description: authdb.roles[i].description,
-      assigned: assign
-     });
+  let roles = [];
+  authdb.roles.forEach(r => {
+   let assign= false;
+   let roleId= r.id;
+   let k=0;
+   while (k<authdb.permission_assignment.length) {
+      if (authdb.permission_assignment[k].roleId===roleId && authdb.permission_assignment[k].permissionId===pID) {
+        k = authdb.permission_assignment.length;
+        assign=true;
+      }
+      k++
+   }
+   roles.push({
+    id: r.id,
+    name: r.name, 
+    description: r.description,
+    assigned: assign
    });
+  });
  return roles;
 }
 
