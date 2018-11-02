@@ -147,11 +147,13 @@ server.get("/api/v1/auth/profile", (req, res) => {
       .status(200)
       .json({ user: user_profile.user, permissions: user_profile.permissions });
   } catch (err) {
-    res.status(401).json({
-      status: 401,
-      message: "Error: Access token is revoked",
-      error: err
-    });
+    res
+      .status(401)
+      .json({
+        status: 401,
+        message: "Error: Access token is revoked",
+        error: err
+      });
   }
 });
 
@@ -392,11 +394,13 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
 
     next();
   } catch (err) {
-    res.status(401).json({
-      status: 401,
-      message: "Error: Access token is revoked",
-      error: err
-    });
+    res
+      .status(401)
+      .json({
+        status: 401,
+        message: "Error: Access token is revoked",
+        error: err
+      });
   }
 });
 
