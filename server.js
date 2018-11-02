@@ -421,18 +421,26 @@ function isRoleAssigned(permission_id, role_id) {
     : true;
 }
 
-server.get("/api/v1/auth/permissionsvsroles", (req, res) => {
-  let permissionsvsroles = [];
-
+function updateRoles(pID) {
   let roles = [];
-  authdb.roles.forEach(r => {
+  authdb.permission_assignment.forEach(pa => {
+    let assign = false;
+    if (pID === pa.permissionId) assign = true;
+    let i = 0;
+    //lookup rolesDB info
+    while (authdb.roles[i].id !== pa.roleId) i++;
     roles.push({
-      id: r.id,
-      name: r.name,
-      description: r.description,
-      assigned: false
+      id: pa.id,
+      name: authdb.roles[i].name,
+      description: authdb.roles[i].description,
+      assigned: assign
     });
   });
+  return roles;
+}
+
+server.get("/api/v1/auth/permissionsvsroles", (req, res) => {
+  let permissionsvsroles = [];
 
   authdb.permissions.forEach(p => {
     const split_permission = p.code.split(":");
@@ -444,23 +452,10 @@ server.get("/api/v1/auth/permissionsvsroles", (req, res) => {
         scope: split_permission[2] === undefined ? "*" : split_permission[2],
         description: p.description
       },
-      roles
+      roles: updateRoles(p.id)
     };
     permissionsvsroles.push(permission);
   });
-
-  let response = [];
-  permissionsvsroles.forEach(p => {
-    p.roles.forEach(r => {
-      r.assigned = isRoleAssigned(p.permission.id, r.id);
-    });
-    response.push(p);
-    console.log(p);
-  });
-  //console.log(response);
-  // response.forEach(x => {
-  //   console.log(x);
-  // });
 
   res.status(200).json(response);
 });
