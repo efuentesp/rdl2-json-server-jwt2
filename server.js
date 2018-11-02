@@ -419,40 +419,42 @@ function updateRoleAssignemt(i, r) {
   return r;
 }
 
+function updateRoles(pID){
+   let roles = [];
+   authdb.permission_assignment.forEach(pa => {
+     let assign=false;
+     if (pID===pa.permissionId) assign=true;
+     let i=0;
+     //lookup rolesDB info
+     while (authdb.roles[i].id!==pa.roleId) 
+      i++; 
+     roles.push({
+      id: pa.id,
+      name: authdb.roles[i].name, 
+      description: authdb.roles[i].description,
+      assigned: assign
+     });
+   });
+ return roles;
+}
+
 server.get("/api/v1/auth/permissionsvsroles", (req, res) => {
   let permissionsvsroles = [];
 
-  let roles = [];
-  authdb.roles.forEach(r => {
-    roles.push({
-      id: r.id,
-      name: r.name,
-      description: r.description,
-      assigned: false
-    });
-  });
-
   authdb.permissions.forEach(p => {
-    const split_permission = p.code.split(":");
-    let permission = {
-      permission: {
-        id: p.id,
-        resource: split_permission[0],
-        action: split_permission[1],
-        scope: split_permission[2] === undefined ? "*" : split_permission[2],
-        description: p.description
-      },
-      roles
-    };
-    permissionsvsroles.push(permission);
-  });
-
-  let i = 0;
-  permissionsvsroles.forEach(p => {
-    //p.roles = updateRoleAssignemt(i, p.roles);
-    updateRoleAssignemt(i, p.roles);
-    i++;
-  });
+  const split_permission = p.code.split(":");
+  let permission = {
+    permission: {
+      id: p.id,
+      resource: split_permission[0],
+      action: split_permission[1],
+      scope: split_permission[2] === undefined ? "*" : split_permission[2],
+      description: p.description
+    },
+    roles: updateRoles(p.id)
+  };
+  permissionsvsroles.push(permission);
+});
 
   res.status(200).json({ permissionsvsroles });
 });
