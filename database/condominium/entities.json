@@ -1,6 +1,5 @@
 {
-  "company": [
-    {
+  "company": [{
       "id": "rTflofQ9",
       "name": "Grupo Piña S.R.L",
       "address": "Manzana Maribel S/N",
@@ -196,8 +195,7 @@
       "id": "5dCxkYRK"
     }
   ],
-  "property": [
-    {
+  "property": [{
       "id": "hmvA0bv2",
       "name": "Meza Meza S.A.",
       "address": "Conjunto Víctor Hugo 56724",
@@ -390,8 +388,7 @@
       "id": "oqqMWSc"
     }
   ],
-  "unit": [
-    {
+  "unit": [{
       "id": "znyFU2la",
       "propertyId": "YYYYYYYY",
       "floor": "949089",
@@ -536,8 +533,7 @@
       "id": "5FrHvO_"
     }
   ],
-  "parkingspot": [
-    {
+  "parkingspot": [{
       "id": "1dyBDDgw",
       "unitId": "YYYYYYYY",
       "floor": "450169",
@@ -643,8 +639,7 @@
       "description": "Voluptatem qui consequatur provident quaerat voluptatum corrupti. Et tempora quis. Aut et et. Voluptatibus quo incidunt consequuntur atque beatae est reprehenderit. Iste omnis et."
     }
   ],
-  "person": [
-    {
+  "person": [{
       "id": "MhcuteWz",
       "firstname": "Marcos",
       "lastname": "Garza",
@@ -780,8 +775,7 @@
       "description": "Molestias sed alias dignissimos. Voluptas earum a sed deserunt nulla explicabo aut. Delectus et asperiores."
     }
   ],
-  "vehicle": [
-    {
+  "vehicle": [{
       "id": "XhRZbA0o",
       "unitId": "YYYYYYYY",
       "licenseplate": "Sit et repellendus.",
@@ -932,8 +926,7 @@
       "description": "Quis reprehenderit nulla doloribus laboriosam impedit non ut. Aliquid rerum perferendis. Deleniti dolores quia ut dolor. Sed sint doloremque voluptatem quisquam."
     }
   ],
-  "note": [
-    {
+  "note": [{
       "id": "QXXvng4P",
       "note": "Saepe neque aut dolor quae itaque sequi ipsum. Ut ut minima facilis dicta eaque officia. Exercitationem voluptatem ad in sint rerum. Voluptatem adipisci dolorum distinctio. Corporis ipsa qui sunt et ab."
     },
@@ -994,8 +987,7 @@
       "note": "Et autem cupiditate est ut ex. Provident sed doloribus est. Beatae rem fugiat et praesentium. Enim velit ut voluptatem amet."
     }
   ],
-  "post": [
-    {
+  "post": [{
       "id": "9yZ7cwx8",
       "status": "DRAFT",
       "expirationdate": "2018-Jun-05",

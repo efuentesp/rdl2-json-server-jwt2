@@ -412,11 +412,13 @@ server.get("/api/v1/auth/roles/:roleId/permissions", (req, res) => {
   res.status(200).json({ permissions });
 });
 
-function updateRoleAssignemt(i, r) {
-  r.forEach(role => {
-    role.assigned = i;
-  });
-  return r;
+function isRoleAssigned(permission_id, role_id) {
+  return _.find(
+    authdb.permission_assignment,
+    pa => pa.permissionId === permission_id && pa.roleId === role_id
+  ) === undefined
+    ? false
+    : true;
 }
 
 server.get("/api/v1/auth/permissionsvsroles", (req, res) => {
@@ -447,14 +449,20 @@ server.get("/api/v1/auth/permissionsvsroles", (req, res) => {
     permissionsvsroles.push(permission);
   });
 
-  let i = 0;
+  let response = [];
   permissionsvsroles.forEach(p => {
-    //p.roles = updateRoleAssignemt(i, p.roles);
-    updateRoleAssignemt(i, p.roles);
-    i++;
+    p.roles.forEach(r => {
+      r.assigned = isRoleAssigned(p.permission.id, r.id);
+    });
+    response.push(p);
+    console.log(p);
   });
+  //console.log(response);
+  // response.forEach(x => {
+  //   console.log(x);
+  // });
 
-  res.status(200).json({ permissionsvsroles });
+  res.status(200).json(response);
 });
 
 server.use("/api/v1/auth", router_auth);

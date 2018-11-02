@@ -10,6 +10,7 @@ module.exports = joi.object().keys({
 		.required(),
 	expirationdate: joi
 		.date()
+		.timestamp(),
 		.required(),
 	title: joi
 		.string()
