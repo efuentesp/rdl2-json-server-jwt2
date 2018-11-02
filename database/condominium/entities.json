@@ -1,5 +1,6 @@
 {
-  "company": [{
+  "company": [
+    {
       "id": "peaQbtIG",
       "name": "Hic rerum minima quis dolor.",
       "address": "Est aliquid dolorem eos aliquid tenetur a non. Voluptatem et non debitis delectus aut non. Reprehenderit commodi ab voluptas consequatur ipsa consequatur voluptatem. Consequatur minus eligendi. Repellendus et repellendus doloribus dolorem doloribus.",
@@ -195,7 +196,8 @@
       "phone2": "Laudantium vel ut cum nisi velit quidem accusamus."
     }
   ],
-  "property": [{
+  "property": [
+    {
       "id": "KkywECjf",
       "name": "Qui deleniti et consequatur vel.",
       "address": "Blanditiis qui qui eos necessitatibus ipsa praesentium. Odit quaerat error. Dolore commodi ullam minima et. Iure illo maxime ea quas vero.",
@@ -376,7 +378,8 @@
       "description": "Cumque ex illo tempora nemo pariatur provident voluptatem. Molestiae voluptas officiis. Sit ut eos aut non natus quod."
     }
   ],
-  "unit": [{
+  "unit": [
+    {
       "id": "icMVdee1",
       "propertyId": "YYYYYYYY",
       "floor": "948557",
@@ -512,7 +515,8 @@
       "tenantId": "YYYYYYYY"
     }
   ],
-  "parkingspot": [{
+  "parkingspot": [
+    {
       "id": "8D91l0Sx",
       "unitId": "YYYYYYYY",
       "floor": "657020",
@@ -618,7 +622,8 @@
       "description": "Vel maxime voluptate ut sequi rerum reprehenderit dolorum. Perferendis quia vero. Est qui quo sed cum id. Quia iusto fugit qui enim delectus soluta."
     }
   ],
-  "person": [{
+  "person": [
+    {
       "id": "cihmpcIe",
       "firstname": "Alberto",
       "lastname": "Gallegos",
@@ -754,7 +759,8 @@
       "description": "Enim asperiores ut facere nobis numquam repudiandae. Minus et qui aperiam. Perferendis corporis nihil aspernatur quae est dolores. Beatae aut atque et aut. Harum molestiae ipsum voluptatem autem."
     }
   ],
-  "vehicle": [{
+  "vehicle": [
+    {
       "id": "IYQghb0S",
       "unitId": "YYYYYYYY",
       "licenseplate": "Illo eligendi voluptatum dolor inventore alias rem.",
@@ -905,7 +911,8 @@
       "description": "Quae natus qui expedita inventore. Dolor officia ratione nobis aut in ad. Vel et ex culpa officiis ducimus. Excepturi iusto molestias totam consequatur qui corporis. Voluptatem dicta consequuntur."
     }
   ],
-  "note": [{
+  "note": [
+    {
       "id": "wjVG6I0J",
       "note": "Excepturi unde rerum reiciendis ut aut alias. Omnis ipsa inventore ducimus. Iste ea quos ipsum exercitationem est nobis consequuntur."
     },
@@ -966,7 +973,8 @@
       "note": "Deleniti occaecati sapiente natus quas neque. Earum reiciendis velit aliquam eos. Nulla accusantium dignissimos. Voluptas doloremque dolorum unde quam dignissimos laboriosam."
     }
   ],
-  "post": [{
+  "post": [
+    {
       "id": "2reIoHVL",
       "status": "ACTIVE",
       "expirationdate": 1501322247878,
