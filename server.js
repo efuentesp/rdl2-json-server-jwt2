@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const _ = require("lodash");
 const lodashId = require("lodash-id");
 const url = require("url");
+const low = require("lowdb");
+const FileSync = require("lowdb/adapters/FileSync");
 
 const server = jsonServer.create();
 const router_condominium = jsonServer.router(
@@ -15,6 +17,9 @@ const bizdb_condominium = JSON.parse(
 );
 const router_auth = jsonServer.router("./database/auth.json");
 const authdb = JSON.parse(fs.readFileSync("./database/auth.json", "UTF-8"));
+
+const adapter = new FileSync("./database/auth.json");
+const db = low(adapter);
 
 const user_schema = require("./schemas/auth/users");
 const role_schema = require("./schemas/auth/roles");
@@ -47,10 +52,8 @@ function createToken(payload) {
 
 // Verify the token
 function verifyToken(token) {
-  return jwt.verify(
-    token,
-    SECRET_KEY,
-    (err, decode) => (decode !== undefined ? decode : err)
+  return jwt.verify(token, SECRET_KEY, (err, decode) =>
+    decode !== undefined ? decode : err
   );
 }
 
@@ -147,13 +150,11 @@ server.get("/api/v1/auth/profile", (req, res) => {
       .status(200)
       .json({ user: user_profile.user, permissions: user_profile.permissions });
   } catch (err) {
-    res
-      .status(401)
-      .json({
-        status: 401,
-        message: "Error: Access token is revoked",
-        error: err
-      });
+    res.status(401).json({
+      status: 401,
+      message: "Error: Access token is revoked",
+      error: err
+    });
   }
 });
 
@@ -394,13 +395,11 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
 
     next();
   } catch (err) {
-    res
-      .status(401)
-      .json({
-        status: 401,
-        message: "Error: Access token is revoked",
-        error: err
-      });
+    res.status(401).json({
+      status: 401,
+      message: "Error: Access token is revoked",
+      error: err
+    });
   }
 });
 
@@ -468,6 +467,107 @@ server.get("/api/v1/auth/permissionsvsroles", (req, res) => {
   });
 
   res.status(200).json(permissionsvsroles);
+});
+
+server.post("/api/v1/auth/role_permission", (req, res) => {
+  let error_messages = [];
+  let validation_result = { error: null, value: null };
+
+  validation_result = permission_assignment_schema.validate(req.body);
+  if (validation_result.error === null) {
+    const role = _.find(authdb.roles, r => r.id === req.body.roleId);
+    if (role === undefined) {
+      error_messages.push(`Role id "${req.body.roleId}" doesn't exist.`);
+      res.status(400).json({
+        status: 400,
+        message: error_messages
+      });
+      return;
+    }
+    const permission = _.find(
+      authdb.permissions,
+      p => p.id === req.body.permissionId
+    );
+    if (permission === undefined) {
+      error_messages.push(
+        `Permission id "${req.body.permissionId}" doesn't exist.`
+      );
+      res.status(400).json({
+        status: 400,
+        message: error_messages
+      });
+      return;
+    }
+  }
+
+  const permission_assignment = _.find(
+    authdb.permission_assignment,
+    a =>
+      a.roleId.toString() === req.body.roleId.toString() &&
+      a.permissionId.toString() === req.body.permissionId.toString()
+  );
+
+  if (permission_assignment === undefined) {
+    db.get("permission_assignment")
+      .push({ roleId: req.body.roleId, permissionId: req.body.permissionId })
+      .write();
+  }
+
+  res.status(200).json();
+});
+
+server.delete("/api/v1/auth/role_permission", (req, res) => {
+  let error_messages = [];
+  let validation_result = { error: null, value: null };
+
+  validation_result = permission_assignment_schema.validate(req.body);
+  if (validation_result.error === null) {
+    const role = _.find(authdb.roles, r => r.id === req.body.roleId);
+    if (role === undefined) {
+      error_messages.push(`Role id "${req.body.roleId}" doesn't exist.`);
+      res.status(400).json({
+        status: 400,
+        message: error_messages
+      });
+      return;
+    }
+    const permission = _.find(
+      authdb.permissions,
+      p => p.id === req.body.permissionId
+    );
+    if (permission === undefined) {
+      error_messages.push(
+        `Permission id "${req.body.permissionId}" doesn't exist.`
+      );
+      res.status(400).json({
+        status: 400,
+        message: error_messages
+      });
+      return;
+    }
+  }
+
+  const permission_assignment = _.find(
+    authdb.permission_assignment,
+    a =>
+      a.roleId.toString() === req.body.roleId.toString() &&
+      a.permissionId.toString() === req.body.permissionId.toString()
+  );
+
+  if (permission_assignment !== undefined) {
+    db.get("permission_assignment")
+      .remove({ roleId: req.body.roleId, permissionId: req.body.permissionId })
+      .write();
+
+    res.status(200).json();
+  } else {
+    res.status(404).json({
+      status: 404,
+      message: `Role "${req.body.roleId}" doesn't have assigned Permission "${
+        req.body.permissionId
+      }".`
+    });
+  }
 });
 
 server.use("/api/v1/auth", router_auth);
