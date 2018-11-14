@@ -469,7 +469,7 @@ server.get("/api/v1/auth/permissionsvsroles", (req, res) => {
   res.status(200).json(permissionsvsroles);
 });
 
-server.post("/api/v1/auth/role_permission", (req, res) => {
+server.post("/api/v1/auth/assign_role_permission", (req, res) => {
   let error_messages = [];
   let validation_result = { error: null, value: null };
 
@@ -516,7 +516,7 @@ server.post("/api/v1/auth/role_permission", (req, res) => {
   res.status(200).json();
 });
 
-server.delete("/api/v1/auth/role_permission", (req, res) => {
+server.post("/api/v1/auth/remove_role_permission", (req, res) => {
   let error_messages = [];
   let validation_result = { error: null, value: null };
 
