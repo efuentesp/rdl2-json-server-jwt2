@@ -6,8 +6,9 @@
   "scripts": {
     "json:server": "json-server --watch ./database/condominium/entities.json",
     "auth:only": "json-server --watch ./auth.json",
-    "start": "nodemon server.js",
-    "test": "jest"
+    "start": "npm run format-json && nodemon server.js",
+    "test": "jest",
+    "format-json": "prettier-eslint --write \"database/**/*.json\""
   },
   "author": "ME:)",
   "license": "ISC",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "frisby": "^2.1.0",
-    "jest": "^23.6.0"
+    "jest": "^23.6.0",
+    "prettier-eslint-cli": "^4.7.1"
   }
 }
