@@ -37,7 +37,7 @@ const post_schema = require("./schemas/entities/condominium/post");
 
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
-server.use(jsonServer.defaults());
+server.use(jsonServer.defaults(["noCors"]));
 
 const SECRET_KEY = "123456789";
 
